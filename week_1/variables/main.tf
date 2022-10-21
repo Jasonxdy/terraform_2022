@@ -9,11 +9,12 @@ resource "aws_instance" "ubuntu_server" {
 
   user_data = <<-EOF
               #!/bin/bash
-              echo "Hello, DongYoung Cho" > index.html
-              nohup busybox httpd -f -p 8080 &
+              echo "My Web Server - var test" > index.html
+              nohup busybox httpd -f -p ${var.server_port} &
               EOF
+
   user_data_replace_on_change = true
-  
+
   tags = {
     Name = "Web-Server-DYC"
   }
@@ -23,8 +24,8 @@ resource "aws_security_group" "instance" {
   name = var.security_group_name
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = var.server_port
+    to_port     = var.server_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -33,7 +34,7 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-example-instance"
+  default     = "terraform-my-instance"
 }
 
 output "public_ip" {
